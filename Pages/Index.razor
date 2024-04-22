@@ -39,6 +39,7 @@
 </div>
 <div>
     <button class="btn btn-primary" @onclick="GuardarInscripcion">Inscribir Alumno</button>
+    <button class="btn btn-secondary" @onclick="CrearReporte">Ver Reporte</button>
 </div>
 
 <div>
@@ -70,11 +71,36 @@
     }
 </div>
 
+<div>        
+    @if (reportes.Count > 0)
+    {
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Alumno</th>
+                    <th>Taller</th>                    
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var reporte in reportes)
+                {
+                    <tr>
+                        <td>@reporte.nombreAlumno</td>
+                        <td>@reporte.nombreTaller</td>                        
+                    </tr>
+                }
+            </tbody>
+        </table>
+    }
+</div>
+
 @code{
 
     List<Alumno> alumnos;
     List<Taller> talleres;
     List<Inscripcion> inscripciones = new List<Inscripcion>();
+    List<Reporte> reportes = new List<Reporte>();
+
 
     string codigoTaller;
     string dpiAlumno;
@@ -103,7 +129,21 @@
         inscripciones.Add(inscripcion);
 
         await localStorage.SetItemAsync("inscripciones", inscripciones);
-
-
     }
+
+    protected void CrearReporte()
+    {
+        foreach (var inscripcion in inscripciones)
+        {
+            Alumno alumno = alumnos.Find(a => a.Dpi == inscripcion.Dpi);
+            Taller taller = talleres.Find(t => t.Codigo == inscripcion.Codigo);
+
+            Reporte reporte = new Reporte();
+            reporte.nombreTaller = taller.Nombre;
+            reporte.nombreAlumno = alumno.Nombre;
+
+            reportes.Add(reporte);
+        }
+    }
+
 }
