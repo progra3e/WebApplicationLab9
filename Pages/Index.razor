@@ -41,6 +41,35 @@
     <button class="btn btn-primary" @onclick="GuardarInscripcion">Inscribir Alumno</button>
 </div>
 
+<div>
+    @if (inscripciones == null)
+    {
+        <p><em>Loading...</em></p>
+    }
+    else
+    {
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Código</th>
+                    <th>DPI</th>
+                    <th>Fecha</th>                    
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var inscripcion  in inscripciones)
+                {
+                    <tr>
+                        <td>@inscripcion.Codigo</td>
+                        <td>@inscripcion.Dpi</td>
+                        <td>@inscripcion.Fecha.ToShortDateString()</td>                        
+                    </tr>
+                }
+            </tbody>
+        </table>
+    }
+</div>
+
 @code{
 
     List<Alumno> alumnos;
@@ -56,6 +85,11 @@
         alumnos = await Http.GetFromJsonAsync<List<Alumno>>("sample-data/alumnos.json");
 
         talleres = await Http.GetFromJsonAsync<List<Taller>>("sample-data/talleres.json");
+
+        // inscripciones = await localStorage.GetItemAsync<List<Inscripcion>>("inscripciones");
+
+        inscripciones = await localStorage.GetItemAsync<List<Inscripcion>>("inscripciones");
+
     }
 
     protected async Task GuardarInscripcion()
@@ -68,7 +102,7 @@
 
         inscripciones.Add(inscripcion);
 
-        await localStorage.SetItemAsync("inscripciones", "inscripciones");
+        await localStorage.SetItemAsync("inscripciones", inscripciones);
 
 
     }
